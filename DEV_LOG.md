@@ -29,17 +29,39 @@
 ---
 
 ## Step 3 — React Frontend UI (Human-in-the-Loop Order Desk) ✅
-**Time:** 10:13 PM, 16 Oct
-**What:** Built complete interactive frontend UI conforming to theme & rubric:
-- `src/components/Header.jsx`: Branding, dynamic state indicator (`idle` -> `planning` -> `awaiting_approval` -> `executing` -> `done`), Live Tool Trace button, demo triggers (Mark #2 Shipped, Reset)
-- `src/components/OrdersTable.jsx`: Full orders table with status badges (pending/shipped/cancelled), policy indicator (cancellable vs locked), age in days, and real-time active plan highlighting
+**Time:** 1:53 AM, 17 Oct
+**What:** Built and deployed complete interactive Human-in-the-Loop dashboard on Alternate Clouds:
+- `src/components/Header.jsx`: Branding, dynamic state machine, live tool trace drawer toggle, demo triggers
+- `src/components/OrdersTable.jsx`: Full orders table with status badges, policy indicator, age in days, and real-time active plan highlighting
 - `src/components/ChatPanel.jsx`: Natural language prompt console with one-click demo presets & chat history
-- `src/components/PlanCard.jsx`: Core Human-in-the-Loop approval gate. Shows target orders, policy exclusions, total amounts, single-use approval, anti-double-click protection, and Approve / Reject buttons
+- `src/components/PlanCard.jsx`: Core Human-in-the-Loop approval gate (single-use approval, anti-double-click, Approve / Reject buttons)
 - `src/components/ExecutionReport.jsx`: Audit report separating verified cancellations (`cancelled_verified`), race condition skips (`skipped_ineligible`), and failures
-- `src/components/TraceDrawer.jsx`: Proof for judges showing chronological MCP/tool call traces, arguments JSON, output preview, and latency
+- `src/components/TraceDrawer.jsx`: Judges proof showing tool calls, arguments JSON, output preview, and latency
 - `src/api.js`: Seamless API client handling live backend or autonomous local simulation
 - `src/mockData.js`: Realistic seed state matching project brief contract
-- Verified production build: `npm.cmd run build` passed with 0 errors
-**Status:** Ready for local testing and live deployment
+- **Live URL:** `https://alternate-lunar-falls-656-github-app.alternatefutures.ai/`
+- Verified end-to-end: prompt generation, plan review, trace drawer inspection, demo race-condition invariant (#2 marked shipped), approval execution, and read-back verified audit reporting all working live!
+**Commits:** `3bf27fb`, `8445b09`, `13883a1`
+**Status:** 100% working live on Alternate Clouds!
+
+---
+
+## Step 4 — Orders API Deployment on Alternate Clouds ✅
+**Time:** 2:02 AM, 17 Oct
+**What:** Deployed Service 2 (`orders-api`) on Alternate Clouds:
+- Python 3.11 + FastAPI + SQLite
+- Exposing port 8000 via container settings
+- Live endpoint verified via curl: `GET /orders` returns all 12 seed records cleanly
+- **Live Orders API URL:** `https://alternate-wandering-asteroid-3439-github-app.alternatefutures.ai/`
+**Status:** 100% live and ready for Afza's MCP tools & Orchestrator!
+
+---
+
+## Current Architecture Status
+- **Service 1 (React Frontend):** `https://alternate-lunar-falls-656-github-app.alternatefutures.ai/` ✅
+- **Service 2 (Orders API):** `https://alternate-wandering-asteroid-3439-github-app.alternatefutures.ai/` ✅
+- **Service 3 (Afza's Orchestrator):** Awaiting Afza's URL to connect `VITE_API_URL` ⏳
+
+
 
 
