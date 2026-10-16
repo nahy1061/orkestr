@@ -8,8 +8,11 @@ RUN npm run build && ls -la /app/dist
 
 # Stage 2: Serve with nginx
 FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
+RUN rm -rf /usr/share/nginx/html/* /etc/nginx/conf.d/* /etc/nginx/http.d/*
+COPY --from=build /app/dist/. /usr/share/nginx/html/
 RUN chmod -R 755 /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/http.d/default.conf
 EXPOSE 80 5173
 CMD ["nginx", "-g", "daemon off;"]
+
