@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Project briefs (internal only)
+AGENTIKA_PROJECT_BRIEF.md
+Agentika_OrderDesk_Blueprint.md
