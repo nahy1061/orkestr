@@ -55,13 +55,21 @@
 - **Live Orders API URL:** `https://alternate-wandering-asteroid-3439-github-app.alternatefutures.ai/`
 **Status:** 100% live and ready for Afza's MCP tools & Orchestrator!
 
+## Step 5 — n8n Internal Integration & Swagger Docs ✅
+**Time:** 2:13 AM, 17 Oct
+**What:** Updated Orders API to support Afza's n8n WF1 & WF2 workflow requirements:
+- Implemented `POST /internal/plans` with `X-Service-Key` header authentication
+- Automatic classification into 3 safety buckets: `recommended`, `needs_decision`, `excluded`
+- Seeded with 15 standard test orders (`ORD-1001` through `ORD-1015`)
+- Implemented `GET /internal/orders`, `GET /internal/orders/{id}`, `POST /internal/orders/{id}/cancel`
+- Live Interactive Swagger Documentation enabled at: `https://alternate-wandering-asteroid-3439-github-app.alternatefutures.ai/docs`
+**Commit:** `9bfcf8d`
+**Status:** Live on Alternate Clouds, tested and shared with Afza for n8n WF1 integration!
+
 ---
 
 ## Current Architecture Status
 - **Service 1 (React Frontend):** `https://alternate-lunar-falls-656-github-app.alternatefutures.ai/` ✅
-- **Service 2 (Orders API):** `https://alternate-wandering-asteroid-3439-github-app.alternatefutures.ai/` ✅
-- **Service 3 (Afza's Orchestrator):** Awaiting Afza's URL to connect `VITE_API_URL` ⏳
-
-
-
-
+- **Service 2 (Orders API + Swagger):** `https://alternate-wandering-asteroid-3439-github-app.alternatefutures.ai/` ✅
+- **Service 2 Interactive Docs:** `https://alternate-wandering-asteroid-3439-github-app.alternatefutures.ai/docs` ✅
+- **Service 3 (Afza's n8n Orchestrator):** In progress by Afza ⏳
