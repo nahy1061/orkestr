@@ -238,8 +238,8 @@ export default function App() {
       {/* Footer info */}
       <footer className="border-t border-slate-900 bg-slate-950/80 px-6 py-4 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>Agentika 2.0 Hackathon • FAST University Islamabad</span>
-          <span className="font-mono text-[11px]">Theme: Human + AI: Better Together</span>
+          <span>LessHelpless • Agentika 2.0 Hackathon • FAST University Islamabad</span>
+          <span className="font-mono text-[11px]">Human + AI: Better Together</span>
           <span>Deploy Target: Alternate Clouds</span>
         </div>
       </footer>

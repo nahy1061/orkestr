@@ -33,12 +33,12 @@ export default function Header({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold tracking-tight text-white font-mono">ORKESTR</h1>
+              <h1 className="text-xl font-bold tracking-tight text-white font-mono">LessHelpless</h1>
               <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                Agentika 2.0
+                Human + AI
               </span>
             </div>
-            <p className="text-xs text-slate-400">Human-in-the-Loop Operations & Deterministic Enforcement</p>
+            <p className="text-xs text-slate-400">AI Proposes. Human Decides. Nobody Feels Helpless.</p>
           </div>
         </div>
 
