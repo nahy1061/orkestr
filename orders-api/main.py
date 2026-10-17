@@ -328,6 +328,30 @@ def internal_get_plan(pid: str):
     return get_plan(pid)
 
 
+class ApprovePlanBody(BaseModel):
+    order_ids: list[str] = []
+    selected_ids: list[str] = []
+
+
+@app.post("/internal/plans/{pid}/approve")
+@app.post("/api/plans/{pid}/approve")
+@app.post("/plans/{pid}/approve")
+def approve_plan(pid: str, body: ApprovePlanBody = ApprovePlanBody()):
+    plan = get_plan(pid)
+    selected = body.order_ids or body.selected_ids
+    if not selected:
+        selected = [item["order_id"] for item in plan.get("items", []) if item.get("bucket") == "recommended"]
+    conn = get_db()
+    conn.execute(
+        "UPDATE plans SET status = 'executing', selected = ? WHERE id = ?",
+        (json.dumps(selected), pid),
+    )
+    conn.commit()
+    conn.close()
+    log_event("plan_approved", f"{pid} selected={selected}")
+    return get_plan(pid)
+
+
 @app.get("/internal/orders", dependencies=[Depends(service_auth)])
 def internal_orders(status: str = "", older_than_days: int = 0):
     conn = get_db()

@@ -1,0 +1,513 @@
+{
+  "name": "orkestrWF2(Execute and verify) FIXED",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://alternate-fused-ghost-7106-github-app.alternatefutures.ai/internal/plans/{{ $json.body.plan_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -1056,
+        576
+      ],
+      "id": "a9bdee1c-1b20-478b-9790-ab721b7212c1",
+      "name": "Load Plan",
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jkl678ga0Pr4jLoN",
+          "name": "Header Auth account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "334449d9-7fa1-496a-8e43-4eee86e6b2c2",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "executing",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -832,
+        576
+      ],
+      "id": "008c6753-3f87-42cc-826f-ea8504749d67",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"error\": \"Plan is not executing\"\n}",
+        "options": {
+          "responseCode": 409
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -624,
+        736
+      ],
+      "id": "1439200a-b4f2-447d-a80d-8e0902e111fd",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -400,
+        496
+      ],
+      "id": "e543e781-18ae-4c7e-adf9-1e3973acceea",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b1000000-0000-4000-8000-000000000001",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "pending",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "b1000000-0000-4000-8000-000000000002",
+              "leftValue": "={{ $json.cancellable }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        48,
+        576
+      ],
+      "id": "722b1251-d1c6-4603-96da-6c7bb404b6b7",
+      "name": "Pending and cancellable?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d1000000-0000-4000-8000-000000000001",
+              "name": "order_id",
+              "value": "={{ $('Loop Over Items').item.json.order_id }}",
+              "type": "string"
+            },
+            {
+              "id": "d1000000-0000-4000-8000-000000000002",
+              "name": "outcome",
+              "value": "skipped",
+              "type": "string"
+            },
+            {
+              "id": "d1000000-0000-4000-8000-000000000003",
+              "name": "reason",
+              "value": "={{ $json.status !== 'pending' ? 'status is ' + ($json.status ?? 'unknown') : 'not cancellable' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        272,
+        704
+      ],
+      "id": "7e41960a-c0da-45c9-8e7d-0cd6161050f6",
+      "name": "Skipped"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { report: $json.report } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        48,
+        336
+      ],
+      "id": "eb5aa5dc-ceb3-44ba-8c70-da80e874d9ce",
+      "name": "Respond with report"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "orkestr-execute",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1280,
+        576
+      ],
+      "id": "db114b54-df25-488a-a53f-9bde58710aaf",
+      "name": "Webhook1",
+      "webhookId": "864d703c-0348-4c73-aafd-875e973dbdff",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "UByF54ywnldYqKbO",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const plan = $('Load Plan').first().json;\n\nconst claimedIds = $('Webhook1').first().json.body.order_ids ?? [];\nconst selected = new Set(plan.selected ?? []);\n\n// only keep ids that are in the plan's approved (selected) list\nconst approvedIds = claimedIds.filter(id => selected.has(id));\n\nreturn approvedIds.map(order_id => ({\n  json: {\n    order_id,\n    plan_id: plan.id,\n  },\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -624,
+        496
+      ],
+      "id": "928fbf12-cd8e-4d1e-b220-f13fafcced40",
+      "name": "One item per order1"
+    },
+    {
+      "parameters": {
+        "url": "=https://alternate-fused-ghost-7106-github-app.alternatefutures.ai/internal/orders/{{ $json.order_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -176,
+        576
+      ],
+      "id": "379bd646-08c1-4605-b58d-055273e755bc",
+      "name": "Get order1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jkl678ga0Pr4jLoN",
+          "name": "Header Auth account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://alternate-fused-ghost-7106-github-app.alternatefutures.ai/internal/orders/{{ $json.id }}/cancel",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        272,
+        480
+      ],
+      "id": "63e148a7-7c5d-43a9-a875-2291ba419e14",
+      "name": "Cancel1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jkl678ga0Pr4jLoN",
+          "name": "Header Auth account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://alternate-fused-ghost-7106-github-app.alternatefutures.ai/internal/orders/{{ $('Loop Over Items').item.json.order_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        496,
+        480
+      ],
+      "id": "bbb4b4a5-eda8-4366-a82e-bb5af60eea57",
+      "name": "Get again1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "jkl678ga0Pr4jLoN",
+          "name": "Header Auth account 2"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1000000-0000-4000-8000-000000000001",
+              "name": "order_id",
+              "value": "={{ $('Loop Over Items').item.json.order_id }}",
+              "type": "string"
+            },
+            {
+              "id": "c1000000-0000-4000-8000-000000000002",
+              "name": "outcome",
+              "value": "={{ $json.status === 'cancelled' ? 'cancelled_verified' : 'failed' }}",
+              "type": "string"
+            },
+            {
+              "id": "c1000000-0000-4000-8000-000000000003",
+              "name": "reason",
+              "value": "={{ $json.status === 'cancelled' ? 'cancel confirmed on re-read' : 'status after cancel is ' + ($json.status ?? 'unknown') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        480
+      ],
+      "id": "f6764024-7b2b-4ea3-9c2a-b96f87b44a26",
+      "name": "Outcome1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "report",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        336
+      ],
+      "id": "4e4d1904-4dce-49c1-ae7c-8e66002f9eac",
+      "name": "Aggregate1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Load Plan": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "One item per order1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get order1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pending and cancellable?": {
+      "main": [
+        [
+          {
+            "node": "Cancel1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skipped",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skipped": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Load Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One item per order1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get order1": {
+      "main": [
+        [
+          {
+            "node": "Pending and cancellable?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancel1": {
+      "main": [
+        [
+          {
+            "node": "Get again1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get again1": {
+      "main": [
+        [
+          {
+            "node": "Outcome1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outcome1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Respond with report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "307e027a-8693-4bc3-b20d-e5b321bf4965",
+  "meta": {
+    "instanceId": "ea5a5e584896341294842bb32e60ae201697dfafb8d960dbcdc78b4afd8fa54e"
+  },
+  "id": "SOW58emh0jCH3ATn",
+  "tags": []
+}

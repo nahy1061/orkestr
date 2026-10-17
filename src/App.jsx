@@ -70,7 +70,8 @@ export default function App() {
     setFeedback(null);
 
     try {
-      const res = await api.approvePlan(planId, orders);
+      const selectedIds = activePlan?.items?.filter(i => i.bucket === 'recommended').map(i => i.order_id) || [];
+      const res = await api.approvePlan(planId, orders, selectedIds);
 
       // Append executor tool traces (proof of recheck, cancel, and read-back verify)
       if (res.trace) {
